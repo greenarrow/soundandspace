@@ -33,22 +33,17 @@
 	<body>
 		
 		{% block header %}
-		<div id="header" class="ui-corner-left ui-widget-header">
-			<h1>Stockpile</h1>
+		<!--<div id="header" class="ui-corner-left ui-widget-header">
+			<h1>Sound and Space</h1>
 			<div id="user-tools"></div>
 			
-		</div>
+		</div>-->
 		{% endblock header %}
 		
-		<div id="navigator" class="ui-widget"><p>{% block navigator %}{% endblock %}<p></div>
-		<div id="user-tools" class="ui-widget"><p>{% if user.is_authenticated %}<b>{{ user.username }}</b>. <a href="{% url stockpile.inventory.views.user_logout %}">logout</a>{% endif %}</p></div>
-		
 		<div id="main_block">
-			<div id="main_body">
-				{% block main_content %}
-				<p>no content has been specified</p>
-				{% endblock main_content %}
-			</div>
+			{% block main_content %}
+			<p>no content has been specified</p>
+			{% endblock main_content %}
 		</div>
 		
 		{% block hidden_divs %}
