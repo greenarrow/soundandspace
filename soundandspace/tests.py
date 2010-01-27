@@ -49,7 +49,7 @@ class WatchFolderCase(unittest.TestCase):
 		self.assertNotEqual( watch.get_node("test3"), None )
 		self.assertNotEqual( watch.get_node("file1.txt"), None )
 		self.assertNotEqual( watch.get_node("test1/file2.txt"), None )
-		self.assertNotEqual( watch.get_node("test1/text4"), None )
+		self.assertNotEqual( watch.get_node("test1/test4"), None )
 		
 		#filesync.scan_folders()
 		
