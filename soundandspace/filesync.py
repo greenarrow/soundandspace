@@ -35,7 +35,7 @@ def scan_folders():
 				full_path = os.path.join(relative_path, item)
 				node = folder.get_node(full_path)
 				if node == None:
-					print "..create node", relative_path, item
+					#print "..create node", relative_path, item
 					folder.create_node(relative_path, item)
 		
 		

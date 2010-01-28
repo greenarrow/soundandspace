@@ -2,24 +2,44 @@ from django.db import models
 import datetime, os
 
 
+
 class FileNode(models.Model):
+	"""Node used in database representation of filesystem. May represent file or folder"""
+	
 	name = models.CharField(max_length=255)
 	parent = models.ForeignKey("self", blank=True, null=True)
+	#folder = models.BooleanField()
 	
 	created = models.DateTimeField()
 	updated = models.DateTimeField()
 	
+	
+	def get_absolute_path(self):
+		node = self
+		path = self.name
+		while node.parent != None:
+			node = node.parent
+			path = os.path.join(node.name, path)
+		
+		results = WatchFolder.objects.filter(root_node=node)
+		
+		if len(results):
+			path = os.path.join( results[0].path, path )
+			return path
+		else:
+			raise LookupError
+	
+	
 	def check_exists_filesystem(self):
-		pass
-		#return os.path.exists(self
-		# TODO need to get full real path
-		return None
+		return os.path.exists( self.get_absolute_path() )
+	
 	
 	def remove_child_node_tree(self):
-		child_nodes = models.FileNode.objects.filter(parent=self)
+		child_nodes = FileNode.objects.filter(parent=self)
 		for node in child_nodes:
-			node.remove_child_nodes()
+			node.remove_child_node_tree()
 		child_nodes.delete()
+	
 	
 	def __unicode__(self):
 		return str(self.name)
@@ -29,6 +49,8 @@ class FileNode(models.Model):
 
 
 class WatchFolder(models.Model):
+	"""A folder that soundandspace will scan and show store in the database, then watch for changes."""
+	
 	name = models.CharField(max_length=255)
 	path = models.CharField(max_length=1000)
 	watch = models.BooleanField()
@@ -50,12 +72,11 @@ class WatchFolder(models.Model):
 			elif len(items) == 0:
 				return None
 			else:
-				print "error"
+				raise LookupError
 		
 		return current_node
-			
-
-
+	
+	
 	def create_node(self, path, name, check_exists=False):
 		parts = [ p for p in path.split("/") if len(p) ]
 		if len(parts) == 0:
@@ -76,11 +97,14 @@ class WatchFolder(models.Model):
 		
 		return node
 	
+	
 	def __unicode__(self):
 		return self.path
 
 
 class SyncLog(models.Model):
+	"""Log of any update to the filesystem representation database"""
+	
 	created = models.DateTimeField()
 	log = models.TextField()
 	nodes_added = models.ManyToManyField(FileNode, related_name="added")
