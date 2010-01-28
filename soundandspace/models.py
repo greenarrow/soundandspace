@@ -9,6 +9,18 @@ class FileNode(models.Model):
 	created = models.DateTimeField()
 	updated = models.DateTimeField()
 	
+	def check_exists_filesystem(self):
+		pass
+		#return os.path.exists(self
+		# TODO need to get full real path
+		return None
+	
+	def remove_child_node_tree(self):
+		child_nodes = models.FileNode.objects.filter(parent=self)
+		for node in child_nodes:
+			node.remove_child_nodes()
+		child_nodes.delete()
+	
 	def __unicode__(self):
 		return str(self.name)
 	
@@ -52,24 +64,17 @@ class WatchFolder(models.Model):
 			node.save()
 		else:
 			current_path = ""
-			print 'parts', parts
 			for p in parts:
 				current_path = os.path.join(current_path, p)
-				print "cpath", current_path
 				parent = self.get_node(current_path)
-				if parent != None:
-					print "cnode", current_path, self.get_node(current_path)
-					
-				else:
-					print "??"
+				if parent == None:
 					self.create_node(current_path, p)
 			
 			created = datetime.datetime.now()
 			node = FileNode.objects.create(name=name, parent=parent, created=created, updated=created)
 			node.save()
-			print "todo"
 		
-		#return node
+		return node
 	
 	def __unicode__(self):
 		return self.path
@@ -80,4 +85,8 @@ class SyncLog(models.Model):
 	log = models.TextField()
 	nodes_added = models.ManyToManyField(FileNode, related_name="added")
 	nodes_modified = models.ManyToManyField(FileNode, related_name="modified")
+
+
+
+
 
