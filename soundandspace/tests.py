@@ -227,11 +227,15 @@ class ReScanCase(unittest.TestCase):
 		root_child_nodes = models.FileNode.objects.filter(parent=watch.root_node)
 		names = [ node.name for node in root_child_nodes ]
 		names.sort()
-		self.assertEquals( names, ['file1.txt', 'test1', 'test2', 'test3', 'test4'] )
+		self.assertEquals( names, ['test2', 'test3'] )
 		
-		self.assertNotEqual( watch.get_node("test1"), None )
+		self.assertEqual( watch.get_node("test1"), None )
 		self.assertNotEqual( watch.get_node("test2"), None )
 		self.assertNotEqual( watch.get_node("test3"), None )
+		self.assertEqual( watch.get_node("file1.txt"), None )
+		self.assertEqual( watch.get_node("test1/file2.txt"), None )
+		self.assertEqual( watch.get_node("test1/test4"), None )
+		self.assertEqual( watch.get_node("test2/file3.txt"), None )
 	
 	
 	def test_second_scan_mixed_files(self):

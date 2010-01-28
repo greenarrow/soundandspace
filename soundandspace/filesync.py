@@ -5,7 +5,8 @@ import os, datetime
 def check_node_tree(node):
 	child_nodes = models.FileNode.objects.filter(parent=node)
 	
-	node.check_exists_filesystem
+	if not node.check_exists_filesystem():
+		node.delete()
 	
 	for cn in child_nodes:
 		check_node_tree(cn)
@@ -41,5 +42,6 @@ def scan_folders():
 		
 		# TODO Walk though nodes in db and remove any for which items no longer exist on disk
 		# TODO Create sync object detailing changes
-				
+		
+		check_node_tree(folder.root_node)
 
