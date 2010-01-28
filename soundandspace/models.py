@@ -8,10 +8,24 @@ class FileNode(models.Model):
 	
 	name = models.CharField(max_length=255)
 	parent = models.ForeignKey("self", blank=True, null=True)
-	#folder = models.BooleanField()
+	directory = models.BooleanField()
 	
 	created = models.DateTimeField()
 	updated = models.DateTimeField()
+	
+	def get_relative_path(self):
+		node = self
+		path = self.name
+		while node.parent != None:
+			node = node.parent
+			path = os.path.join(node.name, path)
+		
+		results = WatchFolder.objects.filter(root_node=node)
+		
+		if len(results):
+			return path
+		else:
+			raise LookupError
 	
 	
 	def get_absolute_path(self):
@@ -42,7 +56,7 @@ class FileNode(models.Model):
 	
 	
 	def __unicode__(self):
-		return str(self.name)
+		return u"%s - %s" % ( str(self.id), str(self.name) )
 	
 	#class Meta:
 	#	ordering = ('-node_type', 'name')
@@ -109,7 +123,13 @@ class SyncLog(models.Model):
 	log = models.TextField()
 	nodes_added = models.ManyToManyField(FileNode, related_name="added")
 	nodes_modified = models.ManyToManyField(FileNode, related_name="modified")
-
+	nodes_removed = models.ManyToManyField(FileNode, related_name="removed")
+	
+	def __unicode__(self):
+		return u"%s - %s" % ( str(self.created), self.log )
+	
+	class Meta:
+		ordering = ['created']
 
 
 

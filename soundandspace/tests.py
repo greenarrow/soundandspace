@@ -7,7 +7,8 @@ def print_node_tree(node, depth=1):
 	""""Print the node tree recursively from a given node"""
 	
 	child_nodes = models.FileNode.objects.filter(parent=node)
-	print (".." * depth) + "node: %d %s %s" % ( node.id, node.name, str(child_nodes) )
+	#print (".." * depth) + "node: %d %s %s" % ( node.id, node.name, str(child_nodes) )
+	print (".." * depth) + "node: %d %s" % ( node.id, node.name)
 	
 	for cn in child_nodes:
 		print_node_tree(cn, depth+1)
@@ -68,7 +69,31 @@ class FileNodeCase(unittest.TestCase):
 		self.assertEquals( node1.get_absolute_path(), os.path.join(self.path, "test1") )
 		self.assertEquals( node2.get_absolute_path(), os.path.join(self.path, "test1", "test4") )
 		self.assertRaises( LookupError, node3.get_absolute_path )
+	
 		
+	def test_get_relative_path(self):
+		"""Test function get_relative_path positive and negative"""
+		
+		created = datetime.datetime.now()
+		
+		rootnode = models.FileNode.objects.create(name="", parent=None, created=created, updated=created)
+		rootnode.save()
+		
+		node1 = models.FileNode.objects.create(name="test1", parent=rootnode, created=created, updated=created)
+		node1.save()
+		
+		node2 = models.FileNode.objects.create(name="test4", parent=node1, created=created, updated=created)
+		node2.save()
+		
+		node3 = models.FileNode.objects.create(name="testbadroot", parent=None, created=created, updated=created)
+		node3.save()
+		
+		watch = models.WatchFolder.objects.create(name="test folder", path=self.path, watch=True, root_node=rootnode)
+		watch.save()
+		
+		self.assertEquals( node1.get_relative_path(), "test1" )
+		self.assertEquals( node2.get_relative_path(), os.path.join("test1", "test4") )
+		self.assertRaises( LookupError, node3.get_relative_path )
 	
 	
 	def test_check_exists_filesystem(self):
@@ -139,7 +164,7 @@ class ReScanCase(unittest.TestCase):
 	def test_initial_scan(self):
 		"""First Scan: Scan test folder from clean database and check everything is found correctly"""
 		models.FileNode.objects.all().delete()
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		watch = models.WatchFolder.objects.filter(name="test folder")[0]
 		
 		root_child_nodes = models.FileNode.objects.filter(parent=watch.root_node)
@@ -155,15 +180,15 @@ class ReScanCase(unittest.TestCase):
 		self.assertNotEqual( watch.get_node("test1/test4"), None )
 		self.assertNotEqual( watch.get_node("test2/file3.txt"), None )
 		
-		print "Node tree:"
+		print "\nNode tree:"
 		print_node_tree(watch.root_node)
 	
 	
 	def test_second_scan_no_change(self):
 		"""Re-Scan No Change: Scan test folder, then scan again before any changes to make sure that no erroneous changes are made in the database"""
 		models.FileNode.objects.all().delete()
-		filesync.scan_folders()
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
+		filesync.scan_folders(verbose=False)
 		
 		watch = models.WatchFolder.objects.filter(name="test folder")[0]
 		
@@ -184,13 +209,13 @@ class ReScanCase(unittest.TestCase):
 	def test_second_scan_add_files(self):
 		"""Re-Scan Add Files: Scan test folder, then add more files and scan again. Make sure additions are correctly added to database"""
 		models.FileNode.objects.all().delete()
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		os.mkdir( os.path.join(self.path, "test4") )
 		os.mkdir( os.path.join(self.path, "test1", "test5") )
 		open( os.path.join(self.path, "test1", "test5", "file6.txt"), "w").write("ok")
 		
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		watch = models.WatchFolder.objects.filter(name="test folder")[0]
 		
@@ -214,13 +239,13 @@ class ReScanCase(unittest.TestCase):
 	def test_second_scan_remove_files(self):
 		"""Re-Scan Remove Files: Scan test folder, then remove some files and scan again. Make sure removals are correctly removed to database"""
 		models.FileNode.objects.all().delete()
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		shutil.rmtree( os.path.join(self.path, "test1") )
 		os.remove( os.path.join(self.path, "file1.txt") )
 		os.remove( os.path.join(self.path, "test2", "file3.txt") )
 		
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		watch = models.WatchFolder.objects.filter(name="test folder")[0]
 		
@@ -241,7 +266,7 @@ class ReScanCase(unittest.TestCase):
 	def test_second_scan_mixed_files(self):
 		"""Re-Scan Add & Remove Files: Scan test folder, then add & remove some files and scan again. Make sure additions & removals are correctly removed to database"""
 		models.FileNode.objects.all().delete()
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		os.mkdir( os.path.join(self.path, "test4") )
 		os.mkdir( os.path.join(self.path, "test1", "test5") )
@@ -251,7 +276,7 @@ class ReScanCase(unittest.TestCase):
 		os.remove( os.path.join(self.path, "file1.txt") )
 		os.remove( os.path.join(self.path, "test2", "file3.txt") )
 		
-		filesync.scan_folders()
+		filesync.scan_folders(verbose=False)
 		
 		watch = models.WatchFolder.objects.filter(name="test folder")[0]
 		
