@@ -3,21 +3,20 @@
 		{% block main-content %}
 			
 				{% if node.parent %}
-					<table class="page-header ui-widget ui-widget-content ui-corner-all"{% if mobile %} width="100%"{% endif %}>
-						<tr>
-							<td><a href="{% url soundandspace.views.view_node node.parent.id %}"><div class="icon ui-state-default ui-corner-all" title="Up"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
-							<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.name }}</strong></td>
-						</tr>
-					</table>
-				
-				{% else %}
-				<table class="ui-widget ui-widget-content ui-corner-all">
+				<table class="page-header ui-widget ui-widget-content ui-corner-all"{% if mobile %} width="100%"{% endif %}>
 					<tr>
-					<td><a href="{% url soundandspace.views.index %}"><div class="icon ui-state-default ui-corner-all" title=".ui-icon-carat-1-n"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
-					<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.get_watch_folder.name }}</strong></td>
+						<td><a href="{% url soundandspace.views.view_node node.parent.id %}"><div class="icon ui-state-default ui-corner-all" title="Up"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
+						<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.name }}</strong></td>
 					</tr>
 				</table>
-				<br />
+				
+				{% else %}
+				<table class="page-header ui-widget ui-widget-content ui-corner-all"{% if mobile %} width="100%"{% endif %}>
+					<tr>
+						<td><a href="{% url soundandspace.views.index %}"><div class="icon ui-state-default ui-corner-all" title="Up"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
+						<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.get_watch_folder.name }}</strong></td>
+					</tr>
+				</table>
 				{% endif %}
 				
 				
