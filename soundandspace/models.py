@@ -54,6 +54,25 @@ class FileNode(models.Model):
 			node.remove_child_node_tree()
 		child_nodes.delete()
 	
+	def get_child_nodes(self):
+		return FileNode.objects.filter(parent=self)
+	
+	def is_root_node(self):
+		if self.parent == None:
+			results = WatchFolder.objects.filter(root_node=self)
+			if len(results) == 1:
+				return True
+		return False
+	
+	def is_empty(self):
+		return len( self.get_child_nodes() ) == 0
+	
+	def get_watch_folder(self):
+		if self.parent == None:
+			results = WatchFolder.objects.filter(root_node=self)
+			if len(results) == 1:
+				return results[0]
+		raise LookupError
 	
 	def __unicode__(self):
 		return u"%s - %s" % ( str(self.id), str(self.name) )

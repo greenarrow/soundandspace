@@ -290,10 +290,58 @@ class ReScanCase(unittest.TestCase):
 		self.assertNotEqual( watch.get_node("test4"), None )
 
 
+class FolderWatchCase(unittest.TestCase):
+	"""Test folder watching"""
+	
+	def setUp(self):
+		self.path = os.path.join( os.getcwd(), "temp-test-data" )
+		create_test_tree(self.path)
+		
+		watch = models.WatchFolder.objects.create(name="test folder", path=self.path, watch=True, root_node=None)
+		watch.save()
+	
+	
+	def tearDown(self):
+		remove_test_tree(self.path)
+	
+	
+	def test_watch_add(self):
+		models.FileNode.objects.all().delete()
+		filesync.scan_folders(verbose=False)
+		
+		watch = models.WatchFolder.objects.filter(name="test folder")[0]
+		
+		watcher = filesync.Watcher()
+		watcher.watch(blocking=False)
+		
+		os.mkdir( os.path.join(self.path, "test4") )
+		os.mkdir( os.path.join(self.path, "test1", "test5") )
+		open( os.path.join(self.path, "test1", "test5", "file6.txt"), "w").write("ok")
+		
+		watcher.terminate()
+		
+		watch = models.WatchFolder.objects.filter(name="test folder")[0]
+		
+		root_child_nodes = models.FileNode.objects.filter(parent=watch.root_node)
+		names = [ node.name for node in root_child_nodes ]
+		names.sort()
+		self.assertEquals( names, ['file1.txt', 'test1', 'test2', 'test3', 'test4'] )
+		
+		self.assertNotEqual( watch.get_node("test1"), None )
+		self.assertNotEqual( watch.get_node("test2"), None )
+		self.assertNotEqual( watch.get_node("test3"), None )
+		self.assertNotEqual( watch.get_node("test4"), None )
+		self.assertNotEqual( watch.get_node("file1.txt"), None )
+		self.assertNotEqual( watch.get_node("test1/file2.txt"), None )
+		self.assertNotEqual( watch.get_node("test1/test4"), None )
+		self.assertNotEqual( watch.get_node("test1/test5"), None )
+		self.assertNotEqual( watch.get_node("test1/test5/file6.txt"), None )
+		self.assertNotEqual( watch.get_node("test2/file3.txt"), None )
+
+	
 
 
-
-
+	# TODO - a case where we add at great depth (noticed some issues here)
 
 
 
