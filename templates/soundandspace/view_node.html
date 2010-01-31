@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+		
+		{% block main-content %}
+			
+				<div class="ui-widget">
+					{% if node.parent %}
+					<br />
+					<table class="ui-widget-content ui-corner-all">
+						<tr>
+						<td><a href="{% url soundandspace.views.view_node node.parent.id %}"><div class="icon ui-state-default ui-corner-all" title=".ui-icon-carat-1-n"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
+						<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.name }}</strong></td>
+						</tr>
+					</table>
+					<br />
+					
+					{% else %}
+					<br />
+					<table class="ui-widget-content ui-corner-all">
+						<tr>
+						<td><a href="{% url soundandspace.views.index %}"><div class="icon ui-state-default ui-corner-all" title=".ui-icon-carat-1-n"><span class="ui-icon ui-button-icon-only ui-icon-carat-1-n"></span></div></a></td>
+						<td{% if mobile %} width="100%"{% endif %}><strong>{{ node.get_watch_folder.name }}</strong></td>
+						</tr>
+					</table>
+					<br />
+					{% endif %}
+					
+					
+					
+					<table class="ui-widget-content ui-corner-all"{% if mobile %} width="100%"{% endif %}>
+						{% if node.is_empty %}
+						<tr>
+							<td{% if mobile %} width="100%"{% endif %}>[empty]</td>
+						</tr>
+						{% else %}
+						{% for child in node.get_child_nodes %}
+						<tr>
+							<td{% if mobile %} width="100%"{% endif %}><a href="{% url soundandspace.views.view_node child.id %}">{{ child.name }}</a></td>
+							<td><a href=""><div class="icon ui-state-default ui-corner-all" title="Create Package"><span class="ui-icon ui-button-icon-only ui-icon-folder-collapsed"></span></div></a></td>
+							<td><a href=""><div class="icon ui-state-default ui-corner-all" title="Download"><span class="ui-icon ui-button-icon-only ui-icon-circle-arrow-s"></span></div></a></td>
+						</tr>
+						{% endfor %}
+						{% endif %}
+					</table>
+					
+				</div>
+	
+		{% endblock main-content %}
+
+		

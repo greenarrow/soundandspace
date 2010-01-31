@@ -3,7 +3,7 @@
 
 <html>
 	<head>
-		<title>{% block title %}Stockpile{% endblock %}</title>
+		<title>{% block title %}Sound and Space{% endblock %}</title>
 	
 		{% block stylesheets %}
 		<link type="text/css" href="{{ MEDIA_URL }}css/dark-hive/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
@@ -22,9 +22,6 @@
 		{% endblock javascripts %}
 		
 		<script type="text/javascript">
-		</script>
-		
-		<script type="text/javascript">
 		{% block page_javascript %}
 		{% endblock %}
 		</script>
@@ -33,21 +30,19 @@
 	<body>
 		
 		{% block header %}
-		<!--<div id="header" class="ui-corner-left ui-widget-header">
-			<h1>Sound and Space</h1>
-			<div id="user-tools"></div>
-			
-		</div>-->
+		<div id="header" class="ui-widget-header ui-corner-all">
+			<h1><a href="{% url soundandspace.views.index %}">Sound and Space</a></h1>
+		</div>
 		{% endblock header %}
 		
-		<div id="main_block">
-			{% block main_content %}
+		<div id="main-block">
+			{% block main-content %}
 			<p>no content has been specified</p>
-			{% endblock main_content %}
+			{% endblock main-content %}
 		</div>
 		
-		{% block hidden_divs %}
-		{% endblock hidden_divs %}
+		{% block hidden-divs %}
+		{% endblock hidden-divs %}
 	</body>
 </html>
 
