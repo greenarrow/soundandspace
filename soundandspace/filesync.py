@@ -93,7 +93,7 @@ def scan_folders(verbose=True):
 		# Check to see if the watch folder has a root file node. If it does not then create it.		
 		if folder.root_node == None:
 			created = datetime.datetime.now()
-			node = models.FileNode(name="", parent=None, created=created, updated=created)
+			node = models.FileNode(name="", parent=None, directory=True, created=created, updated=created)
 			node.save()
 			nodes_added.append(node)
 			folder.root_node = node

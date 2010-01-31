@@ -77,8 +77,8 @@ class FileNode(models.Model):
 	def __unicode__(self):
 		return u"%s - %s" % ( str(self.id), str(self.name) )
 	
-	#class Meta:
-	#	ordering = ('-node_type', 'name')
+	class Meta:
+		ordering = ('-directory', 'name')
 
 
 class WatchFolder(models.Model):
@@ -110,11 +110,11 @@ class WatchFolder(models.Model):
 		return current_node
 	
 	
-	def create_node(self, path, name, check_exists=False):
+	def create_node(self, path, name):
 		parts = [ p for p in path.split("/") if len(p) ]
 		if len(parts) == 0:
 			created = datetime.datetime.now()
-			node = FileNode.objects.create(name=name, parent=self.root_node, created=created, updated=created)
+			node = FileNode.objects.create(name=name, parent=self.root_node, directory=os.path.isdir( os.path.join(self.path, path, name) ), created=created, updated=created)
 			node.save()
 		else:
 			current_path = ""
@@ -125,7 +125,7 @@ class WatchFolder(models.Model):
 					self.create_node(current_path, p)
 			
 			created = datetime.datetime.now()
-			node = FileNode.objects.create(name=name, parent=parent, created=created, updated=created)
+			node = FileNode.objects.create(name=name, parent=parent, directory=os.path.isdir( os.path.join(self.path, path, name) ), created=created, updated=created)
 			node.save()
 		
 		return node

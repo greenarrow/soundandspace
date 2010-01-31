@@ -180,6 +180,11 @@ class ReScanCase(unittest.TestCase):
 		self.assertNotEqual( watch.get_node("test1/test4"), None )
 		self.assertNotEqual( watch.get_node("test2/file3.txt"), None )
 		
+		self.assertTrue( watch.get_node("test1").directory )
+		self.assertTrue( watch.get_node("test2").directory )
+		self.assertTrue( watch.get_node("test3").directory )
+		self.assertTrue( watch.get_node("test1/test4").directory )
+		
 		print "\nNode tree:"
 		print_node_tree(watch.root_node)
 	
