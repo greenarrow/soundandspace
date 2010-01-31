@@ -13,19 +13,27 @@ class FileNode(models.Model):
 	created = models.DateTimeField()
 	updated = models.DateTimeField()
 	
-	def get_relative_path(self):
+	def get_relative_path(self, target=None):
 		node = self
 		path = self.name
-		while node.parent != None:
+		while node.parent != None and node != target:
 			node = node.parent
 			path = os.path.join(node.name, path)
 		
-		results = WatchFolder.objects.filter(root_node=node)
+		if target == None:
+			results = WatchFolder.objects.filter(root_node=node)
+			
+			if len(results):
+				return path
+			else:
+				raise LookupError
 		
-		if len(results):
+		elif target == node:
 			return path
 		else:
 			raise LookupError
+		
+		
 	
 	
 	def get_absolute_path(self):

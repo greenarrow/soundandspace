@@ -31,7 +31,7 @@
 					<tr>
 						<td{% if mobile %} width="100%"{% endif %}>{% if child.directory %}<a href="{% url soundandspace.views.view_node child.id %}">{% endif %}{{ child.name }}{% if child.directory %}</a>{% endif %}</td>
 						<td><a href=""><div class="icon ui-state-default ui-corner-all" title="Create Package"><span class="ui-icon ui-button-icon-only ui-icon-folder-collapsed"></span></div></a></td>
-						<td><a href=""><div class="icon ui-state-default ui-corner-all" title="Download"><span class="ui-icon ui-button-icon-only ui-icon-circle-arrow-s"></span></div></a></td>
+						<td><a href="{% url soundandspace.views.direct_download child.id %}"><div class="icon ui-state-default ui-corner-all" title="Download"><span class="ui-icon ui-button-icon-only ui-icon-circle-arrow-s"></span></div></a></td>
 					</tr>
 					{% endfor %}
 					{% endif %}
