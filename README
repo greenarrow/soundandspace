@@ -1,0 +1,8 @@
+Sound and Space
+
+Sound and Space is a simple web tools for gaining remote access to your files, and for allowing other access to them in a controlled and secure manner.
+It is indented to be run on a small home server, and is designed to work in power concious environment.
+
+* A database is created to represent the selected 'watch' folders on the system. These folders are watched for changes and the database is updated accordingly. The result of this is that the hard disk containing the bulk of the data can remain powered down, and is only required when the final download of a file takes place.
+* Files can only be browsed by an authenticated user, but a user can create 'Packages' which can be downloaded by an non-authenticated user if they have the corresponding UUID based URL.
+
