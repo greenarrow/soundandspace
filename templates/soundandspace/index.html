@@ -2,17 +2,14 @@
 		
 		{% block main-content %}
 			
-				<div class="ui-widget">
-					{% for folder in folders %}
-					{% if folder.root_node %}
-					<br />
-					<div id="header" class="ui-widget-header ui-corner-all">
-						<h3><a href={% url soundandspace.views.view_node folder.root_node.id %}>{{ folder.name }}</a></h3>
-					</div>
-					{% endif %}
-					{% endfor %}
+				{% for folder in folders %}
+				{% if folder.root_node %}
+				<div class="menu-item ui-widget ui-widget-content ui-corner-all">
+					<a href={% url soundandspace.views.view_node folder.root_node.id %}><strong>{{ folder.name }}</strong></a>
 				</div>
-	
+				{% endif %}
+				{% endfor %}
+		
 		{% endblock main-content %}
 
 		
