@@ -104,7 +104,8 @@ class FileNode(models.Model):
 	
 	
 	def __unicode__(self):
-		return u"%s - %s" % ( str(self.id), str(self.name) )
+		#return u"%s - %s" % ( str(self.id), str(self.name) )
+		return u"%s" % ( str(self.id) )
 	
 	
 	class Meta:
