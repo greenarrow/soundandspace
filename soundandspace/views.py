@@ -19,13 +19,21 @@ def get_generic_values(request):
 def index(request):
 	"""The home screen"""
 	folders = models.WatchFolder.objects.filter()
-	return render_to_response( "soundandspace/index.html", get_generic_values().update( {"folders":folders} ), context_instance=RequestContext(request) )
+	
+	dictionary = {"folders":folders}
+	dictionary.update( get_generic_values(request) )
+	
+	return render_to_response( "soundandspace/index.html", dictionary, context_instance=RequestContext(request) )
 
 
 def view_node(request, node_id):
 	"""Display a given node in the db filesystem representation"""
 	node = models.FileNode.objects.get(id=node_id)
-	return render_to_response( "soundandspace/view_node.html", get_generic_values().update( {"node":node}  ), context_instance=RequestContext(request) )
+	
+	dictionary = {"node":node}
+	dictionary.update( get_generic_values(request) )
+	
+	return render_to_response( "soundandspace/view_node.html", dictionary, context_instance=RequestContext(request) )
 
 
 def direct_download(self, node_id):

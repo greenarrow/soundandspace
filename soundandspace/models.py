@@ -4,15 +4,15 @@ import datetime, os
 
 
 class FileNode(models.Model):
-	"""Node used in database representation of filesystem. May represent file or folder"""
+	"""Node used in database representation of filesystem. May represent file or folder
 	
-	# The individual file / folder name, not the full path
+	name	The individual file / folder name, not the full path
+	parent	Parent node, i.e. the folder above
+	directory	Set True if the node is a directory
+	"""
+	
 	name = models.CharField(max_length=255)
-	
-	# Parent node, i.e. the folder above
 	parent = models.ForeignKey("self", blank=True, null=True)
-	
-	# Set True if the node is a directory
 	directory = models.BooleanField()
 	
 	# TODO: Is there some handle that can be used to updated these automatically?
@@ -104,7 +104,8 @@ class FileNode(models.Model):
 	
 	
 	def __unicode__(self):
-		return u"%s - %s" % ( str(self.id), str(self.name) )
+		#return u"%s - %s" % ( str(self.id), str(self.name) )
+		return u"%s" % ( str(self.id) )
 	
 	
 	class Meta:
@@ -113,18 +114,17 @@ class FileNode(models.Model):
 
 
 class WatchFolder(models.Model):
-	"""A folder that soundandspace will scan and show store in the database, then watch for changes."""
+	"""A folder that soundandspace will scan and show store in the database, then watch for changes.
 	
-	# The user displayed name for the folder
+	name		The user displayed name for the folder
+	path		The full path on the filesystem of the folder
+	watch		Set True if the folder is to be watched for changes by the daemon
+	root_node	The node tree representation of the filesystem branches off from the WatchFolder's root node.
+	"""
+	
 	name = models.CharField(max_length=255)
-	
-	# The full path on the filesystem of the folder
 	path = models.CharField(max_length=1000)
-	
-	# Set True if the folder is to be watched for changes by the daemon
 	watch = models.BooleanField()
-	
-	# The node tree representation of the filesystem branches off from the WatchFolder's root node.
 	root_node = models.ForeignKey(FileNode, blank=True, null=True)
 	
 	
@@ -215,29 +215,28 @@ class ExclusionTime(models.Model):
 
 
 class Package(models.Model):
-	"""A package that can be created and then later downloaded by a user that is not authenticate on the system"""
+	"""A package that can be created and then later downloaded by a user that is not authenticate on the system
 	
-	# The node representing the file / folder from which the package was created
+	node			The node representing the file / folder from which the package was created
+	uuid			Unique identifier for the package, used for temporary file and user URL.
+	downloads_permitted	Number of downloads of the package that can take place before it becomes invalid
+	downloads_used		Count of the number of downloads used
+	valid_from		Time & Date from which the package can be downloaded
+	valid_until		Time & Date up until the package can be downloaded
+	excusion_times		Times of day at which the package cannot be downloaded
+	message			Message to display to user when downloading the package
+	"""
+	
 	node = models.ForeignKey(FileNode)
-	
-	# Unique identifier for the package, used for temporary file and user URL.
 	uuid = models.CharField(max_length=255)
 	
-	# Number of downloads of the package that can take place before it becomes invalid
 	downloads_permitted = models.IntegerField()
-	# Count of the number of downloads used
 	downloads_used = models.IntegerField()
 	
-	# Time & Date from which the package can be downloaded
 	valid_from = models.DateTimeField(blank=True, null=True)
-	
-	# Time & Date up until the package can be downloaded
 	valid_until = models.DateTimeField(blank=True, null=True)
-	
-	# Times of day at which the package cannot be downloaded
 	excusion_times = models.ManyToManyField(ExclusionTime, related_name="exclusion_times")
 	
-	# Message to display to user when downloading the package
 	message = models.TextField(blank=True, null=True)
 	
 
