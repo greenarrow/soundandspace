@@ -1,0 +1,46 @@
+a {text-decoration: none;}
+a.link-hover {text-decoration: underline;}
+
+div#header {
+	padding:0px 20px;
+}
+
+
+div#main-block{
+	top: 10px;
+	margin:0px 0px 0px 0px;
+	position:relative;
+	z-index:5;
+}
+
+
+div.icon {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+span.ui-icon { float: left; margin: 0 4px;}
+
+table.linear-menu {
+	border: none 0px;
+	border-spacing: 0px 10px;
+}
+
+div.menu-item {
+	margin: 10px 0px;
+	padding-left:20px;
+	padding-right:10px;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+table.page-header {
+	margin: 10px 0px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+table.file-list {
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:5px;
+	padding-bottom:5px;
+}
